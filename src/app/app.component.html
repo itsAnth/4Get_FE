@@ -1,0 +1,32 @@
+<div class="row justify-content-md-center mt-5 mb-5" *ngIf="noTodoFound">
+  <div class="alert alert-danger col-6 text-center" role="alert">
+    No list exists at that URL. Here is a new page to get your started.
+  </div>
+</div><!-- row -->
+
+
+<div class="row justify-content-md-center mt-2 mb-2">
+  <div class="w-75">
+    <form class="form-inline justify-content-center">
+      <div class="form-group col-6">
+        <label for="task" class="sr-only">Task</label>
+        <input type="text" class="form-control w-100" id="task" [(ngModel)]="newTask" [ngModelOptions]="{standalone: true}">
+      </div>
+      <button type="submit" class="btn btn-info ml-2" (click)="addTask(newTask); newTask=''">Add</button>
+    </form>
+  </div>
+</div><!-- row -->
+
+<div class="row justify-content-md-center">
+  <div class="col-md-5">
+    <div class="list-group list-group-flush">
+      <a class="list-group-item clearfix" *ngFor="let task of tasks" (click)="completeTask(task);" [style.text-decoration]="task.completed ? 'line-through' : 'none'">
+        {{ task.description }}
+        <span class="pull-right">
+          <button type="button" class="close" (click)="removeTask(task); $event.stopPropagation()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </span>
+      </a>
+    </div>
+  </div>
