@@ -1,17 +1,23 @@
-<div class="row justify-content-md-center mt-5 mb-5" *ngIf="noTodoFound">
+<div class="row justify-content-center mt-2 mb-0" *ngIf="noTodoFound">
   <div class="alert alert-danger col-6 text-center" role="alert">
-    No list exists at that URL. Here is a new page to get your started.
+    No list exists at that URL. Here is a new page to get you started.
   </div>
 </div><!-- row -->
 
+<div class="row justify-content-center m-0 p-0">
+    <div class="form-group">
+        <input class="form-control custominput" type="text" [(ngModel)]="title" onclick="this.select()" (change)="titleChanged(title);">
+      </div><!-- form-group -->
+  </div><!-- row -->
 
-<div class="row justify-content-center mt-2 mb-2">
+<div class="row justify-content-center mt-0 mb-2 p-0">
     <form class="form-inline justify-content-center">
       <div class="form-group">
         <label class="sr-only"></label>
         <input type="text" class="form-control" id="task" [(ngModel)]="newTask" [ngModelOptions]="{standalone: true}">
       </div>
       <button type="submit" class="btn btn-info ml-2 mobile-space" (click)="addTask(newTask); newTask=''">Add</button>
+      <button type="button" class="btn btn-secondary ml-2 mobile-space" data-toggle="modal" data-target="#qrModal"><fa name="qrcode"></fa></button>
     </form>
 </div><!-- row -->
 
@@ -26,5 +32,22 @@
           </button>
         </span>
       </a>
+    </div>
+  </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="qModalLabel">Scan Code</h5>
+        </div>
+        <div class="modal-body">
+            <img id='barcode' class="img-responsive" [src]="qrLink" width="100" height="100" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
   </div>

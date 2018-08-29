@@ -1,3 +1,30 @@
 @media screen and (max-width: 767px) {
     .mobile-space {margin-bottom:16px;}
     }
+
+    .custominput {
+        border: 0;
+        outline: 0;
+        background: transparent;
+        border-radius: 0px;
+        outline: none;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        box-shadow: none !important;
+        border-bottom: 1px solid #6C757D;
+      }
+
+      .modal-body {
+        position:relative;
+        height: 100px;
+    }
+
+    .img-responsive {
+        width:100px; /* This value will depend on what size you want for your loading image, let's say it's 50px */
+        height: 100px;
+        position:absolute;
+        left:50%;
+        top:50%;
+        margin-top:-50px; /* This needs to be half of the height */
+        margin-left:-50px; /* This needs to be half of the width */
+    }

@@ -15,24 +15,32 @@ export class AppComponent implements OnInit {
   status: any;
   token: any;
   noTodoFound: any;
-  title: any;
+  title: string = "Untitled <rename me>";
+  qrLink: string = "https://api.qrserver.com/v1/create-qr-code/?data=www.4getlists.xyz&amp;size=100x100";
 
   newTask: string;
   
+  getQrCodeUrl(link) {
+    if (link === undefined) {
+      var sLink = "https://api.qrserver.com/v1/create-qr-code/?data=www.4getlists.xyz&amp;size=100x100";
+    } else {
+      var sLink = "https://api.qrserver.com/v1/create-qr-code/?data=www.4getlists.xyz/?id=" + link + "&amp;size=100x100";
+    }
+    return sLink;
+  }
+
   sendRequest() {
 
-    console.log(this.tasks);
     var oSendBody = {
-      title: "hi",
+      title: this.title,
       tasks: this.tasks
     };
     if (this.tasks.length === 0 && this.status === 1) {
-      console.log("trying to delete");
       this.http.delete(
         be_url + this.token)
       .subscribe(
         data => {
-          console.log("deleted");
+          this.qrLink = this.getQrCodeUrl(undefined);
           this.router.navigate(['/']);
         }
       )
@@ -42,7 +50,7 @@ export class AppComponent implements OnInit {
         oSendBody)
       .subscribe(
         data => {
-          console.log("here is the data", data);
+          //console.log("here is the data", data); Can replace with message if needed
         }
       )
     } else {
@@ -51,6 +59,7 @@ export class AppComponent implements OnInit {
         oSendBody)
       .subscribe(
         data => {
+          this.qrLink = this.getQrCodeUrl(this.token);
           this.router.navigate(['/'], {queryParams: { 'id': this.token }});
         }
       )
@@ -69,7 +78,6 @@ export class AppComponent implements OnInit {
   }
 
   completeTask(task) {
-    console.log("completed task");
     task.completed = !task.completed;
     this.sendRequest();
   }
@@ -82,10 +90,14 @@ export class AppComponent implements OnInit {
     }
   }
 
-  generateQR() {
-    console.log("here is the code");
+  titleChanged(title) {
+    if(title.length === 0) {
+      this.title = "Untitled <rename me>";
+    }
+    if (this.tasks.length !== 0) {
+      this.sendRequest();
+    }
   }
-
 
   constructor(private http: HttpClient, private activatedRoute: ActivatedRoute, private router: Router) {
     this.newTask = '';
@@ -115,18 +127,36 @@ export class AppComponent implements OnInit {
   }
 
   getData(id) {
-    console.log(id);
     this.http.get<Object>(be_url + id).subscribe(
       data => {
-        this.token = data["token"];
-        this.status = data["status"];
-        this.tasks = data["payload"]["tasks"];
-        if (!this.status) {
+        try {
+          if (!data["success"]) {
+            throw new Error("Could not find that todo list.");
+          } 
+          this.token = data["token"];
+          this.status = data["status"];
+          this.title = data["payload"]["title"];
+          this.tasks = data["payload"]["tasks"];
+          this.qrLink = this.getQrCodeUrl(this.token);
+          if (!this.status) {
+            this.noTodoFound = true;
+            this.qrLink = this.getQrCodeUrl(undefined);
+            this.router.navigate(['/']);
+          }
+        } catch (e) {
+          console.log(e.message);
           this.noTodoFound = true;
+          this.qrLink = this.getQrCodeUrl(undefined);
           this.router.navigate(['/']);
         }
+        
       }
-    )
+    , e => {
+        console.log("Could not find that todo list B");
+        this.noTodoFound = true;
+        this.qrLink = this.getQrCodeUrl(undefined);
+        this.router.navigate(['/']);
+    });
   }
 
 }
